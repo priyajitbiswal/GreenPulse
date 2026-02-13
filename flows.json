@@ -1,0 +1,270 @@
+[
+    {
+        "id": "aba0a55553a84761",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0ef2fc6b899a1b79",
+        "type": "mqtt in",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "topic": "/iot-nodered/temp",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "e67e7b3fc1403389",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 220,
+        "wires": [
+            [
+                "7b7347399bf950d7",
+                "14419b3762d970d0"
+            ]
+        ]
+    },
+    {
+        "id": "1b2b9093a35ac768",
+        "type": "mqtt in",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "topic": "/iot-nodered/hum",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "e67e7b3fc1403389",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 360,
+        "wires": [
+            [
+                "946681a644d76f13",
+                "8209125d457f2997"
+            ]
+        ]
+    },
+    {
+        "id": "946681a644d76f13",
+        "type": "json",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 390,
+        "y": 380,
+        "wires": [
+            [
+                "dbee83b67e89a5fd"
+            ]
+        ]
+    },
+    {
+        "id": "7b7347399bf950d7",
+        "type": "json",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 400,
+        "y": 160,
+        "wires": [
+            [
+                "dbee83b67e89a5fd"
+            ]
+        ]
+    },
+    {
+        "id": "14419b3762d970d0",
+        "type": "ui_gauge",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "group": "fe76f44c2b4fa153",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "deg",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 400,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "8209125d457f2997",
+        "type": "ui_gauge",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "group": "fe76f44c2b4fa153",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 390,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "dbee83b67e89a5fd",
+        "type": "join",
+        "z": "aba0a55553a84761",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 580,
+        "y": 280,
+        "wires": [
+            [
+                "ad265592db53d1c3"
+            ]
+        ]
+    },
+    {
+        "id": "ad265592db53d1c3",
+        "type": "function",
+        "z": "aba0a55553a84761",
+        "name": "function 1",
+        "func": "let temp = parseFloat(msg.payload[\"/iot-nodered/temp\"]);\nlet hum = parseFloat(msg.payload[\"/iot-nodered/hum\"]);\n\nlet condition = \"\";\n\nif (temp > 30) condition = \"Hot\";\nelse if (temp < 20) condition = \"Cold\";\nelse if (hum >= 40 && hum <= 70) condition = \"Comfort\";\nelse if (hum < 40) condition = \"Dry\";\nelse condition = \"Humid\";\n\nmsg.payload = {\n    temperature: temp,\n    humidity: hum,\n    condition: condition\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 280,
+        "wires": [
+            [
+                "87fb9cb26df95d3f"
+            ]
+        ]
+    },
+    {
+        "id": "87fb9cb26df95d3f",
+        "type": "ui_text",
+        "z": "aba0a55553a84761",
+        "group": "fe76f44c2b4fa153",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "OUTPUT",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 880,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "e67e7b3fc1403389",
+        "type": "mqtt-broker",
+        "name": "mqtt1",
+        "broker": "test.mosquitto.org",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "fe76f44c2b4fa153",
+        "type": "ui_group",
+        "name": "IoT",
+        "tab": "ccb99250cad7d229",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ccb99250cad7d229",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "414e14e3030008ce",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
